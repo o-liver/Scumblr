@@ -296,8 +296,8 @@ class ScumblrTask::GithubAnalyzer < ScumblrTask::Base
     begin
       time = Time.new
       File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min}:#{time.sec}:#{time.usec} - Rest GET: #{@github_api_endpoint}/rate_limit?access_token=#{@github_oauth_token}" }
-      rest_get = RestClient.get "#{@github_api_endpoint}/rate_limit?access_token=#{@github_oauth_token}"
-      File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min}:#{time.sec}:#{time.usec} - Rest GET response: #{rest_get}" }
+      # rest_get = RestClient.get "#{@github_api_endpoint}/rate_limit?access_token=#{@github_oauth_token}"
+      # File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min}:#{time.sec}:#{time.usec} - Rest GET response: #{rest_get}" }
       response = JSON.parse(RestClient.get "#{@github_api_endpoint}/rate_limit?access_token=#{@github_oauth_token}")
       File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min}:#{time.sec}:#{time.usec} - Parsed response: #{response}" }
       core_rate_limit = response["resources"]["core"]["remaining"].to_i
