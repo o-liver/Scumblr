@@ -294,20 +294,21 @@ class ScumblrTask::GithubAnalyzer < ScumblrTask::Base
 
     # Check ratelimit for core lookups
     begin
-      File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "Rest GET: #{@github_api_endpoint}/rate_limit?access_token=#{@github_oauth_token}" }
+      time = Time.new
+      File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min}:#{time.sec}:#{time.usec} - Rest GET: #{@github_api_endpoint}/rate_limit?access_token=#{@github_oauth_token}" }
       rest_get = RestClient.get "#{@github_api_endpoint}/rate_limit?access_token=#{@github_oauth_token}"
-      File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "Rest GET response: #{rest_get}" }
+      File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min}:#{time.sec}:#{time.usec} - Rest GET response: #{rest_get}" }
       response = JSON.parse(RestClient.get "#{@github_api_endpoint}/rate_limit?access_token=#{@github_oauth_token}")
-      File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "Parsed response: #{response}" }
+      File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min}:#{time.sec}:#{time.usec} - Parsed response: #{response}" }
       core_rate_limit = response["resources"]["core"]["remaining"].to_i
       no_limit = false
       # If we have hit the core limit, sleep
       rate_limit_sleep(core_rate_limit, response["resources"]["core"]["reset"], no_limit)
     rescue => e
       # Rate limiting might not be enabled, e.g. with GitHub Enterprise
-      File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "Error: #{e}" }
-      File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "Error rest_get: #{e.rest_get}" }
-      File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "Error response: #{e.response}" }
+      File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min}:#{time.sec}:#{time.usec} - Error: #{e}" }
+      File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min}:#{time.sec}:#{time.usec} - Error rest_get: #{e.rest_get}" }
+      File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min}:#{time.sec}:#{time.usec} - Error response: #{e.response}" }
       if JSON.parse(e.response)["message"] == "Rate limiting is not enabled."
         no_limit = true
         core_rate_limit = 0
