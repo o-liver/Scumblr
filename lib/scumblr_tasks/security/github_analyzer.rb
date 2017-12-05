@@ -305,6 +305,8 @@ class ScumblrTask::GithubAnalyzer < ScumblrTask::Base
       rate_limit_sleep(core_rate_limit, response["resources"]["core"]["reset"], no_limit)
     rescue => e
       # Rate limiting might not be enabled, e.g. with GitHub Enterprise
+      File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "Error: #{e}" }
+      File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "Error rest_get: #{e.rest_get}" }
       File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "Error response: #{e.response}" }
       if JSON.parse(e.response)["message"] == "Rate limiting is not enabled."
         no_limit = true
