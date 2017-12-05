@@ -294,15 +294,16 @@ class ScumblrTask::GithubAnalyzer < ScumblrTask::Base
 
     # Check ratelimit for core lookups
     begin
-      File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.write("Rest GET: #{@github_api_endpoint}/rate_limit?access_token=#{@github_oauth_token}") }
+      File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "Rest GET: #{@github_api_endpoint}/rate_limit?access_token=#{@github_oauth_token}" }
       response = JSON.parse(RestClient.get "#{@github_api_endpoint}/rate_limit?access_token=#{@github_oauth_token}")
-      File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.write("Rest GET response: #{response}") }
+      File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "Rest GET response: #{response}" }
       core_rate_limit = response["resources"]["core"]["remaining"].to_i
       no_limit = false
       # If we have hit the core limit, sleep
       rate_limit_sleep(core_rate_limit, response["resources"]["core"]["reset"], no_limit)
     rescue => e
       # Rate limiting might not be enabled, e.g. with GitHub Enterprise
+      File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "Error response: #{e.response}" }
       if JSON.parse(e.response)["message"] == "Rate limiting is not enabled."
         no_limit = true
         core_rate_limit = 0
