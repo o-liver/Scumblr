@@ -307,7 +307,7 @@ class ScumblrTask::GithubAnalyzer < ScumblrTask::Base
     rescue => e
       # Rate limiting might not be enabled, e.g. with GitHub Enterprise
       File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min}:#{time.sec}:#{time.usec} - Error: #{e}" }
-      File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min}:#{time.sec}:#{time.usec} - Error rest_get: #{e.rest_get}" }
+      # File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min}:#{time.sec}:#{time.usec} - Error rest_get: #{e.rest_get}" }
       File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min}:#{time.sec}:#{time.usec} - Error response: #{e.response}" }
       if JSON.parse(e.response)["message"] == "Rate limiting is not enabled."
         no_limit = true
