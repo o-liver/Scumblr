@@ -551,11 +551,15 @@ class ScumblrTask::GithubAnalyzer < ScumblrTask::Base
 
         begin
           # If the scope is a repo, we need to set a different query string
+          time = Time.new
           if type == "repo"
+            File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min}:#{time.sec}:#{time.usec} - Rest GET: #{@github_api_endpoint}/search/code?q=#{term.strip}+in:#{@options[:scope]}+repo:#{scope}&access_token=#{@github_oauth_token}" }
             response = RestClient.get URI.escape("#{@github_api_endpoint}/search/code?q=#{term.strip}+in:#{@options[:scope]}+repo:#{scope}&access_token=#{@github_oauth_token}"), :accept => "application/vnd.github.v3.text-match+json"
           else
+            File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min}:#{time.sec}:#{time.usec} - Rest GET: #{@github_api_endpoint}/search/code?q=#{term.strip}+in:#{@options[:scope]}+user:#{scope}&access_token=#{@github_oauth_token}" }
             response = RestClient.get URI.escape("#{@github_api_endpoint}/search/code?q=#{term.strip}+in:#{@options[:scope]}+user:#{scope}&access_token=#{@github_oauth_token}"), :accept => "application/vnd.github.v3.text-match+json"
           end
+          File.open('/usr/src/app/scumblr/log/debug.log', 'a') { |file| file.puts "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min}:#{time.sec}:#{time.usec} - Rest response: #{response}" }
         rescue RestClient::Exception => e
           Rails.logger.error e.message
           Rails.logger.error e.backtrace
